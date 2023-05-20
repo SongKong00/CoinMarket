@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+    <head>
+
+        <!-- Webpage Title -->
+        <title>Hello, world!</title>
+
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <!-- Bulma CSS -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
+        <!-- JS -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+
+        <script>
+            function withdraw() {
+                $.ajax({
+                    type: "POST",
+                    url: "/api/withdrawmoney",
+                    data: {
+                        withdraw_money_give: $('#withdraw').val(),
+                    },
+                    success: function (response) {
+                        if (response['result'] == 'success') {
+                            alert('출금 완료하였습니다.')
+                            window.location.href = '/'
+                        } else {
+                            alert(response['msg'])
+                        }
+                    }
+                })
+            }
+
+        </script>
+    </head>
+    <body>
+        <div class="section has-text-centered">
+            <h1 class="title">출금 페이지</h1>
+            <div class="container" style="width:60%">
+                <div class="field is-horizontal">
+                    <div class="field-label is-normal">
+                        <label class="label" for="withdraw">출금할 돈</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="field">
+                            <div class="control">
+                                <input type="text" class="input" id="withdraw" placeholder="출금액">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="button is-primary" onclick="withdraw()">출금</button>
+            </div>
+        </div>
+    </body>
+</html>
