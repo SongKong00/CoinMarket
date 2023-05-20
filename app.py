@@ -1,3 +1,4 @@
+from bson import ObjectId
 from flask import Flask, render_template, jsonify, request, session, redirect, url_for
 
 app = Flask(__name__)
@@ -56,6 +57,11 @@ def add():
 def withdraw():
     return render_template('withdraw.html')
 
+@app.route('/usersell')
+def usersell():
+    return render_template('usersell.html')
+
+
 
 #################################
 ##  로그인을 위한 API            ##
@@ -72,7 +78,7 @@ def api_register():
 
     pw_hash = hashlib.sha256(pw_receive.encode('utf-8')).hexdigest()
 
-    db.user.insert_one({'id': id_receive, 'pw': pw_hash, 'nick': nickname_receive, 'coinNum': 0, 'money': 0})
+    db.user.insert_one({'id': id_receive, 'pw': pw_hash, 'nick': nickname_receive, 'coinNum': 0, 'money': 0, 'post':[]}).inserted_id
 
     return jsonify({'result': 'success'})
 
@@ -185,7 +191,33 @@ def api_withdrawmoney():
         return jsonify({'result': 'fail', 'msg': '로그인 시간이 만료되었습니다.'})
     except jwt.exceptions.DecodeError:
         return jsonify({'result': 'fail', 'msg': '로그인 정보가 존재하지 않습니다.'})
+
+
+
+#[사용자 판매 글 작성 API]
+@app.route('/api/usersell', methods=['POST'])
+def api_usersell():
+    token_receive = request.cookies.get('mytoken')
+    sell_coin_receive = request.form['sell_coin_give']
+    sell_price_receive = request.form['sell_price_give']
+
     
+    # token을 시크릿키로 디코딩합니다.
+    # 보실 수 있도록 payload를 print 해두었습니다. 우리가 로그인 시 넣은 그 payload와 같은 것이 나옵니다.
+    payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+    print(payload)
+
+    # payload 안에 id가 들어있습니다. 이 id로 유저정보를 찾습니다.
+    # 여기에선 그 예로 닉네임을 보내주겠습니다.
+    post = {'sellCoin': sell_coin_receive, 'price': sell_price_receive, 'id': payload['id']}
+    post_id = db.post.insert_one(post).inserted_id
+    
+
+    db.user.update_one({'id': payload['id']}, {'$push': {'posts': post_id}})
+
+    return jsonify({'result': 'success'})
+
+      
 
 if __name__ == '__main__':
     app.run('0.0.0.0', port=5000, debug=True)
