@@ -18,7 +18,7 @@
         function userpost(user_id) {
             $.ajax({
                 type: "GET",
-                url: "/user/6469714059642f99ec91fa44/posts",
+                url: '/user/' + user_id + '/posts',
                 data: {},
                 success: function (response) {
                     if (response.result === "success") {
@@ -47,7 +47,7 @@
         <tr>
             <td>{{ post.sellCoin }}</td>
             <td>{{ post.price }}</td>
-            <td>{{ post.userId }}</td>
+            <td>{{ post.id }}</td>
         </tr>
         {% endfor %}
     </table>

@@ -40,6 +40,10 @@
         window.location.href='/user/' + user_id + '/posts'
       }
 
+      function all_post(){
+        window.location.href='/posts'
+      }
+
     </script>
 
   </head>
@@ -51,6 +55,7 @@
         <button class="button is-danger" onclick="withdraw()">출금하기</button>
         <button class="button is-danger" onclick="user_sell()">내 코인 판매하기</button>
         <button class="button is-danger" onclick="user_posts('{{ user_id }}')">내 글 조회하기</button>
+        <button class="button is-danger" onclick="all_post()">코인 판매 글 조회하기</button>
         <button class="button is-danger" onclick="logout()">로그아웃하기</button>
 
         <h1>내가 작성한 글 목록</h1>
@@ -64,7 +69,7 @@
               <tr>
                   <td>{{ post.sellCoin }}</td>
                   <td>{{ post.price }}</td>
-                  <td>{{ post.userId }}</td>
+                  <td>{{ post.id }}</td>
               </tr>
               {% endfor %}
           </table>
