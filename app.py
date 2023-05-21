@@ -266,6 +266,41 @@ def buy_coins():
     except jwt.exceptions.DecodeError:
         return jsonify({'result': 'fail', 'msg': '로그인 정보가 존재하지 않습니다.'})
 
+
+
+#[유저로부터 코인 구매]
+@app.route('/user/<post_id>/buy', methods=['POST'])
+def buy_user_coins(post_id):
+    token_receive = request.cookies.get('mytoken')
+    done_receive = request.form['buy_give']
+
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+        print(payload)
+
+        userinfo = db.user.find_one({'id': payload['id']}, {'_id': 0})
+        postinfo = db.post.find_one({'_id': ObjectId(post_id)})
+        marketinfo = db.market.find_one({"_id": ObjectId('6469a502214a03383c08f340')})
+        selluserinfo = db.user.find_one({'post': {'$elemMatch': {'$eq': ObjectId(postinfo['_id'])}}})
+
+        if (postinfo['done'] == True):
+            return jsonify({'result': 'fail', 'msg': '이미 판매가 완료되었습니다.'})
+        elif (userinfo['money'] < (int(postinfo['sellCoin'])*int(postinfo['price']))):
+            return jsonify({'result': 'fail', 'msg': '잔액이 부족합니다.'})
+        else:
+            db.user.update_one({"coinNum": userinfo['coinNum']}, {"$set": {"coinNum": (userinfo['coinNum'] + int(postinfo['sellCoin']))}})
+            db.user.update_one({"money": userinfo['money']}, {"$set": {"money": userinfo['money'] - (int(postinfo['sellCoin'])*int(postinfo['price']))}})
+            db.user.update_one({"money": selluserinfo['money']}, {"$set": {"money": selluserinfo['money'] + (int(postinfo['sellCoin'])*int(postinfo['price']))}})
+            db.post.update_one({"done": postinfo['done']}, {"$set": {"done": True}})
+            db.market.update_one({"currentPrice":marketinfo['currentPrice']},  {"$set": {"currentPrice": int(postinfo['price'])}})
+
+            return jsonify({'result': 'success'})
+            
+    except jwt.ExpiredSignatureError:
+        # 위를 실행했는데 만료시간이 지났으면 에러가 납니다.
+        return jsonify({'result': 'fail', 'msg': '로그인 시간이 만료되었습니다.'})
+    except jwt.exceptions.DecodeError:
+        return jsonify({'result': 'fail', 'msg': '로그인 정보가 존재하지 않습니다.'})
       
 
 if __name__ == '__main__':

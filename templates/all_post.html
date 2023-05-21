@@ -24,13 +24,35 @@
                     if (response.result === "success") {
                     var posts = response.posts;
                     // 받아온 게시물 데이터(posts)를 처리하는 로직을 작성
-                } else {
+                    } else {
                     var message = response.message;
                     // 에러 메시지 처리 로직을 작성
-      }
+                    }
                 }
             })
         }
+
+        function user_buy(post_id) {
+                $.ajax({
+                    type: "POST",
+                    url: "/user/" + post_id + "/buy",
+                    data: {
+                        buy_give: true
+                    },
+                    success: function (response) {
+                        if (response['result'] == 'success') {
+
+                            $.cookie('mytoken', response['token']);
+
+                            alert('구매 완료!')
+                            window.location.href = '/'
+                        } else {
+                            alert(response['msg'])
+                        }
+                    }
+                })
+            }
+
 
     </script>
 
@@ -42,12 +64,18 @@
             <th>판매하는 코인 개수</th>
             <th>판매하는 코인 개수</th>
             <th>작성자</th>
+            <th>구매</th>
         </tr>
         {% for post in posting %}
         <tr>
             <td>{{ post.sellCoin }}</td>
             <td>{{ post.price }}</td>
             <td>{{ post.id }}</td>
+            <td>
+                <div class="control">
+                <input type="button" id="done" onclick="user_buy('{{ post._id }}')" value="구매">
+                </div>
+            </td>
         </tr>
         {% endfor %}
     </table>
