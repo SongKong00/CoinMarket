@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+    <head>
+
+        <!-- Webpage Title -->
+        <title>Hello, world!</title>
+
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <!-- Bulma CSS -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
+        <!-- JS -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+
+        <script>
+            function market() {
+                $.ajax({
+                    type: "POST",
+                    url: "/market",
+                    data: {
+                        market_coin_give: $('#market').val(),
+                    },
+                    success: function (response) {
+                        if (response['result'] == 'success') {
+                            alert('구매를 완료하였습니다.')
+                            window.location.href = '/'
+                        } else {
+                            alert(response['msg'])
+                        }
+                    }
+                })
+            }
+
+        </script>
+    </head>
+    <body>
+        <div class="section has-text-centered">
+            <h1 class="title">마켓 구매 페이지</h1>
+            <br><br>
+            <h5 class="subtitle">마켓의 잔여 코인 개수는 {{remainCoin}} 개</h5>
+            <br>
+            <h5 class="subtitle">현재 코인 가격은: {{currentPrice}} 원</h5><br><br>
+            <div class="container" style="width:60%">
+                <div class="field is-horizontal">
+                    <div class="field-label is-normal">
+                        <label class="label" for="market">구매할 개수</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="field">
+                            <div class="control">
+                                <input type="text" class="input" id="market" placeholder="구매 개수">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="button is-primary" onclick="market()">구매 완료</button>
+            </div>
+        </div>
+    </body>
+</html>
