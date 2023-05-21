@@ -293,6 +293,7 @@ def buy_user_coins(post_id):
             db.user.update_one({"money": selluserinfo['money']}, {"$set": {"money": selluserinfo['money'] + (int(postinfo['sellCoin'])*int(postinfo['price']))}})
             db.post.update_one({"done": postinfo['done']}, {"$set": {"done": True}})
             db.market.update_one({"currentPrice":marketinfo['currentPrice']},  {"$set": {"currentPrice": int(postinfo['price'])}})
+            db.market.update_one({'_id': marketinfo["_id"]}, {'$push': {'history': int(postinfo['price'])}})
 
             return jsonify({'result': 'success'})
             
