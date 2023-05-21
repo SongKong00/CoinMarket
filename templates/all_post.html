@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Webpage Title -->
+    <title>Hello, world!</title>
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bulma CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
+    <!-- JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+
+    <script>
+        function all_post() {
+            $.ajax({
+                type: "GET",
+                url: '/posts',
+                data: {},
+                success: function (response) {
+                    if (response.result === "success") {
+                    var posts = response.posts;
+                    // 받아온 게시물 데이터(posts)를 처리하는 로직을 작성
+                } else {
+                    var message = response.message;
+                    // 에러 메시지 처리 로직을 작성
+      }
+                }
+            })
+        }
+
+    </script>
+
+</head>
+<body>
+    <h1>전체 판매 글 목록</h1>
+    <table border="1">
+        <tr>
+            <th>판매하는 코인 개수</th>
+            <th>판매하는 코인 개수</th>
+            <th>작성자</th>
+        </tr>
+        {% for post in posting %}
+        <tr>
+            <td>{{ post.sellCoin }}</td>
+            <td>{{ post.price }}</td>
+            <td>{{ post.id }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

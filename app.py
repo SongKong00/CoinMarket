@@ -38,8 +38,9 @@ def home():
         # 사용자가 작성한 글 목록 조회
         post_ids = user_info['post']
         posts = db.post.find({'_id': {'$in': post_ids}})
+        posting = db.post.find()
 
-        return render_template('index.html', nickname=user_info["nick"], money=user_info["money"], coinNum=user_info["coinNum"], posts = posts, user_id = user_id)
+        return render_template('index.html', nickname=user_info["nick"], money=user_info["money"], coinNum=user_info["coinNum"], posts = posts, user_id = user_id, posting=posting)
     except jwt.ExpiredSignatureError:
         return redirect(url_for("login", msg="로그인 시간이 만료되었습니다."))
     except jwt.exceptions.DecodeError:
@@ -49,7 +50,8 @@ def home():
 @app.route('/login')
 def login():
     msg = request.args.get("msg")
-    return render_template('login.html', msg=msg)
+    market_info = db.market.find_one({"_id": ObjectId('6469a502214a03383c08f340')})
+    return render_template('login.html', msg=msg, remainCoin = market_info["remainCoin"], currentPrice = market_info["currentPrice"])
 
 
 @app.route('/register')
@@ -226,22 +228,7 @@ def api_usersell():
 
 
 
-# @app.route('/api/user', methods=['GET'])
-# def user_posts(id):
-
-#     token_receive = request.cookies.get('mytoken')
-    
-#     payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
-#     print(payload)
-
-#     # 사용자(collection) 조회
-#     user = db.user.find_one({'_id': ObjectId(id)})
-#     user_id = str(user["_id"])
-
-#     return jsonify(result='success', user_id=user_id)
-
-
-
+#[사용자 글 내역 조회]
 @app.route('/user/<user_id>/posts', methods=['GET'])
 def get_user_posts(user_id):
     token_receive = request.cookies.get('mytoken')
@@ -259,6 +246,18 @@ def get_user_posts(user_id):
 
     return render_template('user_post.html', posts = posts)
 
+
+#[전체 판매 글 내역 조회]
+@app.route('/posts', methods=['GET'])
+def get_posts():
+    token_receive = request.cookies.get('mytoken')
+    
+    payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+
+    # 사용자(collection) 조회
+    posting = db.post.find()
+    
+    return render_template('all_post.html', posting = posting)
 
       
 
