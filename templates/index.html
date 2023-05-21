@@ -44,6 +44,10 @@
         window.location.href='/posts'
       }
 
+      function market(){
+        window.location.href='/market'
+      }
+
     </script>
 
   </head>
@@ -53,6 +57,7 @@
         <h5 class="subtitle">나의 코인 개수는: {{coinNum}} 개</h5>
         <button class="button is-danger" onclick="add()">입금하기</button>
         <button class="button is-danger" onclick="withdraw()">출금하기</button>
+        <button class="button is-danger" onclick="market()">마켓에서 코인 사기</button>
         <button class="button is-danger" onclick="user_sell()">내 코인 판매하기</button>
         <button class="button is-danger" onclick="user_posts('{{ user_id }}')">내 글 조회하기</button>
         <button class="button is-danger" onclick="all_post()">코인 판매 글 조회하기</button>

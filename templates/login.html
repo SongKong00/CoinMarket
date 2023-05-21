@@ -43,13 +43,18 @@
                 })
             }
 
+            function market(){
+                window.location.href='/market'
+            }
+
         </script>
 
     </head>
     <body>
         <div class="section has-text-centered">
             <h5 class="subtitle">마켓의 잔여 코인 개수는 {{remainCoin}} 개</h5>
-            <h5 class="subtitle">현재 코인 가격은: {{currentPrice}} 원</h5><br><br>
+            <h5 class="subtitle">현재 코인 가격은: {{currentPrice}} 원</h5><br>
+            <button class="button is-danger" onclick="market()">마켓에서 코인 사기</button><br><br>
             <h1 class="title">로그인 페이지</h1>
             <div class="container" style="width:60%">
                 <div class="field is-horizontal">

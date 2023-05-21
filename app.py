@@ -70,6 +70,10 @@ def withdraw():
 def usersell():
     return render_template('usersell.html')
 
+@app.route('/market')
+def market():
+    market_info = db.market.find_one({"_id": ObjectId('6469a502214a03383c08f340')})
+    return render_template('market.html', remainCoin = market_info["remainCoin"], currentPrice = market_info["currentPrice"])
 
 
 #################################
@@ -124,32 +128,6 @@ def api_login():
         return jsonify({'result': 'fail', 'msg': '아이디/비밀번호가 일치하지 않습니다.'})
 
 
-# [유저 정보 확인 API]
-# 로그인된 유저만 call 할 수 있는 API입니다.
-# 유효한 토큰을 줘야 올바른 결과를 얻어갈 수 있습니다.
-# (그렇지 않으면 남의 장바구니라든가, 정보를 누구나 볼 수 있겠죠?)
-# @app.route('/api/nick', methods=['GET'])
-# def api_valid():
-#     token_receive = request.cookies.get('mytoken')
-
-#     # try / catch 문?
-#     # try 아래를 실행했다가, 에러가 있으면 except 구분으로 가란 얘기입니다.
-
-#     try:
-#         # token을 시크릿키로 디코딩합니다.
-#         # 보실 수 있도록 payload를 print 해두었습니다. 우리가 로그인 시 넣은 그 payload와 같은 것이 나옵니다.
-#         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
-#         print(payload)
-
-#         # payload 안에 id가 들어있습니다. 이 id로 유저정보를 찾습니다.
-#         # 여기에선 그 예로 닉네임을 보내주겠습니다.
-#         userinfo = db.user.find_one({'id': payload['id']}, {'_id': 0})
-#         return jsonify({'result': 'success', 'nickname': userinfo['nick'], 'money': userinfo['money'], 'coinNum': userinfo['coinNum']})
-#     except jwt.ExpiredSignatureError:
-#         # 위를 실행했는데 만료시간이 지났으면 에러가 납니다.
-#         return jsonify({'result': 'fail', 'msg': '로그인 시간이 만료되었습니다.'})
-#     except jwt.exceptions.DecodeError:
-#         return jsonify({'result': 'fail', 'msg': '로그인 정보가 존재하지 않습니다.'})
 
 #[입금 API]
 @app.route('/api/addmoney', methods=['POST'])
@@ -210,21 +188,18 @@ def api_usersell():
     sell_coin_receive = request.form['sell_coin_give']
     sell_price_receive = request.form['sell_price_give']
 
-    
-    # token을 시크릿키로 디코딩합니다.
-    # 보실 수 있도록 payload를 print 해두었습니다. 우리가 로그인 시 넣은 그 payload와 같은 것이 나옵니다.
     payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
     print(payload)
 
-    # payload 안에 id가 들어있습니다. 이 id로 유저정보를 찾습니다.
-    # 여기에선 그 예로 닉네임을 보내주겠습니다.
-    post = {'sellCoin': sell_coin_receive, 'price': sell_price_receive, 'id': payload['id']}
-    post_id = db.post.insert_one(post).inserted_id
-    
+    userinfo = db.user.find_one({'id': payload['id']}, {'_id': 0})
 
-    db.user.update_one({'id': payload['id']}, {'$push': {'post': post_id}})
-
-    return jsonify({'result': 'success'})
+    if (userinfo['coinNum'] < int(sell_coin_receive)):
+        return jsonify({'result': 'fail', 'msg': '판매할 코인 개수가 보유한 코인 개수를 초과하였습니다.'})
+    else:
+        post = {'sellCoin': sell_coin_receive, 'price': sell_price_receive, 'done': False, 'id': payload['id']}
+        post_id = db.post.insert_one(post).inserted_id
+        db.user.update_one({'id': payload['id']}, {'$push': {'post': post_id}})
+        return jsonify({'result': 'success'})
 
 
 
@@ -258,6 +233,38 @@ def get_posts():
     posting = db.post.find()
     
     return render_template('all_post.html', posting = posting)
+
+
+
+#[마켓에서 코인 구매]
+@app.route('/market', methods=['POST'])
+def buy_coins():
+    token_receive = request.cookies.get('mytoken')
+    market_coin_receive = request.form['market_coin_give']
+
+    try:
+        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+        print(payload)
+
+        userinfo = db.user.find_one({'id': payload['id']}, {'_id': 0})
+        marketinfo = db.market.find_one({"_id": ObjectId('6469a502214a03383c08f340')})
+
+        if (marketinfo['remainCoin'] < int(market_coin_receive)):
+            return jsonify({'result': 'fail', 'msg': '구매할 코인 개수가 마켓의 잔여 코인 개수를 초과하였습니다.'})
+        elif (userinfo['money'] < (int(market_coin_receive)*marketinfo['currentPrice'])):
+            return jsonify({'result': 'fail', 'msg': '잔액이 부족합니다.'})
+        else:
+            db.market.update_one({"remainCoin": marketinfo['remainCoin']}, {"$set": {"remainCoin": marketinfo['remainCoin'] - int(market_coin_receive)}})
+            db.user.update_one({"coinNum": userinfo['coinNum']}, {"$set": {"coinNum": userinfo['coinNum'] + int(market_coin_receive)}})
+            db.user.update_one({"money": userinfo['money']}, {"$set": {"money": userinfo['money'] - (int(market_coin_receive)*marketinfo['currentPrice'])}})
+
+            return jsonify({'result': 'success', 'remainCoin': marketinfo['remainCoin']})
+            
+    except jwt.ExpiredSignatureError:
+        # 위를 실행했는데 만료시간이 지났으면 에러가 납니다.
+        return jsonify({'result': 'fail', 'msg': '로그인 시간이 만료되었습니다.'})
+    except jwt.exceptions.DecodeError:
+        return jsonify({'result': 'fail', 'msg': '로그인 정보가 존재하지 않습니다.'})
 
       
 
