@@ -36,6 +36,10 @@
         window.location.href='/usersell'
       }
 
+      function user_posts(user_id){
+        window.location.href='/user/' + user_id + '/posts'
+      }
+
     </script>
 
   </head>
@@ -46,7 +50,23 @@
         <button class="button is-danger" onclick="add()">입금하기</button>
         <button class="button is-danger" onclick="withdraw()">출금하기</button>
         <button class="button is-danger" onclick="user_sell()">내 코인 판매하기</button>
-        <button class="button is-danger" onclick="user_posts()">내 글 조회하기</button>
+        <button class="button is-danger" onclick="user_posts('{{ user_id }}')">내 글 조회하기</button>
         <button class="button is-danger" onclick="logout()">로그아웃하기</button>
+
+        <h1>내가 작성한 글 목록</h1>
+          <table border="1">
+              <tr>
+                  <th>판매하는 코인 개수</th>
+                  <th>판매하는 코인 개수</th>
+                  <th>작성자</th>
+              </tr>
+              {% for post in posts %}
+              <tr>
+                  <td>{{ post.sellCoin }}</td>
+                  <td>{{ post.price }}</td>
+                  <td>{{ post.userId }}</td>
+              </tr>
+              {% endfor %}
+          </table>
   </body>
 </html>

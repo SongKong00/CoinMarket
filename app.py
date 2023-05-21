@@ -32,7 +32,14 @@ def home():
     try:
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
         user_info = db.user.find_one({"id": payload['id']})
-        return render_template('index.html', nickname=user_info["nick"], money=user_info["money"], coinNum=user_info["coinNum"])
+        
+        user_id = str(user_info['_id'])
+        
+        # 사용자가 작성한 글 목록 조회
+        post_ids = user_info['post']
+        posts = db.post.find({'_id': {'$in': post_ids}})
+
+        return render_template('index.html', nickname=user_info["nick"], money=user_info["money"], coinNum=user_info["coinNum"], posts = posts, user_id = user_id)
     except jwt.ExpiredSignatureError:
         return redirect(url_for("login", msg="로그인 시간이 만료되었습니다."))
     except jwt.exceptions.DecodeError:
@@ -119,28 +126,28 @@ def api_login():
 # 로그인된 유저만 call 할 수 있는 API입니다.
 # 유효한 토큰을 줘야 올바른 결과를 얻어갈 수 있습니다.
 # (그렇지 않으면 남의 장바구니라든가, 정보를 누구나 볼 수 있겠죠?)
-@app.route('/api/nick', methods=['GET'])
-def api_valid():
-    token_receive = request.cookies.get('mytoken')
+# @app.route('/api/nick', methods=['GET'])
+# def api_valid():
+#     token_receive = request.cookies.get('mytoken')
 
-    # try / catch 문?
-    # try 아래를 실행했다가, 에러가 있으면 except 구분으로 가란 얘기입니다.
+#     # try / catch 문?
+#     # try 아래를 실행했다가, 에러가 있으면 except 구분으로 가란 얘기입니다.
 
-    try:
-        # token을 시크릿키로 디코딩합니다.
-        # 보실 수 있도록 payload를 print 해두었습니다. 우리가 로그인 시 넣은 그 payload와 같은 것이 나옵니다.
-        payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
-        print(payload)
+#     try:
+#         # token을 시크릿키로 디코딩합니다.
+#         # 보실 수 있도록 payload를 print 해두었습니다. 우리가 로그인 시 넣은 그 payload와 같은 것이 나옵니다.
+#         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+#         print(payload)
 
-        # payload 안에 id가 들어있습니다. 이 id로 유저정보를 찾습니다.
-        # 여기에선 그 예로 닉네임을 보내주겠습니다.
-        userinfo = db.user.find_one({'id': payload['id']}, {'_id': 0})
-        return jsonify({'result': 'success', 'nickname': userinfo['nick'], 'money': userinfo['money'], 'coinNum': userinfo['coinNum']})
-    except jwt.ExpiredSignatureError:
-        # 위를 실행했는데 만료시간이 지났으면 에러가 납니다.
-        return jsonify({'result': 'fail', 'msg': '로그인 시간이 만료되었습니다.'})
-    except jwt.exceptions.DecodeError:
-        return jsonify({'result': 'fail', 'msg': '로그인 정보가 존재하지 않습니다.'})
+#         # payload 안에 id가 들어있습니다. 이 id로 유저정보를 찾습니다.
+#         # 여기에선 그 예로 닉네임을 보내주겠습니다.
+#         userinfo = db.user.find_one({'id': payload['id']}, {'_id': 0})
+#         return jsonify({'result': 'success', 'nickname': userinfo['nick'], 'money': userinfo['money'], 'coinNum': userinfo['coinNum']})
+#     except jwt.ExpiredSignatureError:
+#         # 위를 실행했는데 만료시간이 지났으면 에러가 납니다.
+#         return jsonify({'result': 'fail', 'msg': '로그인 시간이 만료되었습니다.'})
+#     except jwt.exceptions.DecodeError:
+#         return jsonify({'result': 'fail', 'msg': '로그인 정보가 존재하지 않습니다.'})
 
 #[입금 API]
 @app.route('/api/addmoney', methods=['POST'])
@@ -213,9 +220,45 @@ def api_usersell():
     post_id = db.post.insert_one(post).inserted_id
     
 
-    db.user.update_one({'id': payload['id']}, {'$push': {'posts': post_id}})
+    db.user.update_one({'id': payload['id']}, {'$push': {'post': post_id}})
 
     return jsonify({'result': 'success'})
+
+
+
+# @app.route('/api/user', methods=['GET'])
+# def user_posts(id):
+
+#     token_receive = request.cookies.get('mytoken')
+    
+#     payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+#     print(payload)
+
+#     # 사용자(collection) 조회
+#     user = db.user.find_one({'_id': ObjectId(id)})
+#     user_id = str(user["_id"])
+
+#     return jsonify(result='success', user_id=user_id)
+
+
+
+@app.route('/user/<user_id>/posts', methods=['GET'])
+def get_user_posts(user_id):
+    token_receive = request.cookies.get('mytoken')
+    
+    payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+
+    # 사용자(collection) 조회
+    user = db.user.find_one({'_id': ObjectId(user_id)})
+    user_id = str(user['_id'])
+    print(user_id)
+
+    # 사용자가 작성한 글 목록 조회
+    post_ids = user['post']  # 사용자 문서의 'posts' 필드에서 글 ID 목록 가져오기
+    posts = db.post.find({'_id': {'$in': post_ids}})  # 글 ID 목록을 사용하여 'posts' collection에서 글 조회
+
+    return render_template('user_post.html', posts = posts)
+
 
       
 

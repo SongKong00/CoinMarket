@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+    <head>
+
+        <!-- Webpage Title -->
+        <title>Hello, world!</title>
+
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <!-- Bulma CSS -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
+        <!-- JS -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+
+        <script>
+            function sell_post() {
+                $.ajax({
+                    type: "POST",
+                    url: "/api/usersell",
+                    data: {
+                        sell_coin_give: $('#coin').val(),
+                        sell_price_give: $('#price').val(),
+                    },
+                    success: function (response) {
+                        if (response['result'] == 'success') {
+                            alert('판매 글 작성을 완료하였습니다.')
+                            window.location.href = '/'
+                        } else {
+                            alert(response['msg'])
+                        }
+                    }
+                })
+            }
+
+        </script>
+    </head>
+    <body>
+        <div class="section has-text-centered">
+            <h1 class="title">내 코인 판매 페이지</h1>
+            <div class="container" style="width:60%">
+                <div class="field is-horizontal">
+                    <div class="field-label is-normal">
+                        <label class="label" for="coin">판매할 코인 개수</label>
+                        <label class="label" for="price">판매할 코인 가격</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="field">
+                            <div class="control">
+                                <input type="text" class="input" id="coin" placeholder="판매할 코인 개수">
+                                <br>
+                                <input type="text" class="input" id="price" placeholder="판매할 코인 가격">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="button is-primary" onclick="sell_post()">판매하기</button>
+            </div>
+        </div>
+    </body>
+</html>
