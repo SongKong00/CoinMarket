@@ -291,7 +291,9 @@ def buy_user_coins(post_id):
             db.user.update_one({"coinNum": userinfo['coinNum']}, {"$set": {"coinNum": (userinfo['coinNum'] + int(postinfo['sellCoin']))}})
             db.user.update_one({"money": userinfo['money']}, {"$set": {"money": userinfo['money'] - (int(postinfo['sellCoin'])*int(postinfo['price']))}})
             db.user.update_one({"money": selluserinfo['money']}, {"$set": {"money": selluserinfo['money'] + (int(postinfo['sellCoin'])*int(postinfo['price']))}})
+            db.user.update_one({}, {"$pull": {"post": {"_id": ObjectId(postinfo['_id'])}}})
             db.post.update_one({"done": postinfo['done']}, {"$set": {"done": True}})
+            db.post.delete_one({"_id": ObjectId(postinfo['_id'])})
             db.market.update_one({"currentPrice":marketinfo['currentPrice']},  {"$set": {"currentPrice": int(postinfo['price'])}})
             db.market.update_one({'_id': marketinfo["_id"]}, {'$push': {'history': int(postinfo['price'])}})
 
