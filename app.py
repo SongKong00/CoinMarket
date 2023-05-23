@@ -8,7 +8,7 @@ from pymongo import MongoClient
 client = MongoClient("mongodb+srv://hesong1:thdgkdms1!@song.h22vyph.mongodb.net/?retryWrites=true&w=majority")
 db = client["software_engineering"]
 
-# JWT 토큰을 만들 때 필요한 비밀문자열입니다. 아무거나 입력해도 괜찮습니다.
+# JWT 토큰을 만들 때 필요한 비밀문자열입니다.
 # 이 문자열은 서버만 알고있기 때문에, 내 서버에서만 토큰을 인코딩(=만들기)/디코딩(=풀기) 할 수 있습니다.
 SECRET_KEY = 'HAEUN'
 
@@ -18,13 +18,11 @@ import jwt
 # 토큰에 만료시간을 줘야하기 때문에, datetime 모듈도 사용합니다.
 import datetime
 
-# 회원가입 시엔, 비밀번호를 암호화하여 DB에 저장해두는 게 좋습니다.
-# 그렇지 않으면, 개발자(=나)가 회원들의 비밀번호를 볼 수 있으니까요.^^;
 import hashlib
 
 
 #################################
-##  HTML을 주는 부분             ##
+##      HTML을 주는 부분        ##
 #################################
 @app.route('/')
 def home():
@@ -38,6 +36,8 @@ def home():
         # 사용자가 작성한 글 목록 조회
         post_ids = user_info['post']
         posts = db.post.find({'_id': {'$in': post_ids}})
+
+        #전체 글 목록 조회 
         posting = db.post.find()
 
         return render_template('index.html', nickname=user_info["nick"], money=user_info["money"], coinNum=user_info["coinNum"], posts = posts, user_id = user_id, posting=posting)
@@ -77,7 +77,7 @@ def market():
 
 
 #################################
-##  로그인을 위한 API            ##
+##      로그인을 위한 API       ##
 #################################
 
 # [회원가입 API]
@@ -136,13 +136,11 @@ def api_addmoney():
     money_receive = request.form['money_give']
 
     try:
-        # token을 시크릿키로 디코딩합니다.
-        # 보실 수 있도록 payload를 print 해두었습니다. 우리가 로그인 시 넣은 그 payload와 같은 것이 나옵니다.
+        #토큰으로 회원확인
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
         print(payload)
 
-        # payload 안에 id가 들어있습니다. 이 id로 유저정보를 찾습니다.
-        # 여기에선 그 예로 닉네임을 보내주겠습니다.
+        #입금액 db 저장
         userinfo = db.user.find_one({'id': payload['id']}, {'_id': 0})
         db.user.update_one({"money": userinfo['money']}, {"$set": {"money": userinfo['money']+int(money_receive)}})
         return jsonify({'result': 'success', 'money': userinfo['money']})
@@ -160,16 +158,15 @@ def api_withdrawmoney():
     withdraw_money_receive = request.form['withdraw_money_give']
 
     try:
-        # token을 시크릿키로 디코딩합니다.
-        # 보실 수 있도록 payload를 print 해두었습니다. 우리가 로그인 시 넣은 그 payload와 같은 것이 나옵니다.
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
         print(payload)
 
-        # payload 안에 id가 들어있습니다. 이 id로 유저정보를 찾습니다.
-        # 여기에선 그 예로 닉네임을 보내주겠습니다.
         userinfo = db.user.find_one({'id': payload['id']}, {'_id': 0})
+
+        #출금액이 잔액보다 많은 경우
         if (userinfo['money'] < int(withdraw_money_receive)):
             return jsonify({'result': 'fail', 'msg': '출금할 금액이 잔액을 초과하였습니다.'})
+        #출금액 db 저장
         else:
             db.user.update_one({"money": userinfo['money']}, {"$set": {"money": userinfo['money']-int(withdraw_money_receive)}})
             return jsonify({'result': 'success', 'money': userinfo['money']})
@@ -229,7 +226,7 @@ def get_posts():
     
     payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
 
-    # 사용자(collection) 조회
+    # 글(collection) 조회
     posting = db.post.find()
     
     return render_template('all_post.html', posting = posting)
@@ -242,7 +239,7 @@ def get_posts_sellcoin():
     
     payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
 
-    # 사용자(collection) 조회
+    # 글(collection) 코인 개수 오름차순 조회
     posting = db.post.find().sort("sellCoin", 1)
     
     return render_template('all_post.html', posting = posting)
@@ -255,7 +252,7 @@ def get_posts_price():
     
     payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
 
-    # 사용자(collection) 조회
+    # 글(collection) 코인 가격 오름차순 조회
     posting = db.post.find().sort("price", 1)
     
     return render_template('all_post.html', posting = posting)
@@ -279,6 +276,7 @@ def buy_coins():
         elif (userinfo['money'] < (int(market_coin_receive)*marketinfo['currentPrice'])):
             return jsonify({'result': 'fail', 'msg': '잔액이 부족합니다.'})
         else:
+            # 마켓 코인 개수, 유저 코인 개수, 잔액 update
             db.market.update_one({"remainCoin": marketinfo['remainCoin']}, {"$set": {"remainCoin": marketinfo['remainCoin'] - int(market_coin_receive)}})
             db.user.update_one({"coinNum": userinfo['coinNum']}, {"$set": {"coinNum": userinfo['coinNum'] + int(market_coin_receive)}})
             db.user.update_one({"money": userinfo['money']}, {"$set": {"money": userinfo['money'] - (int(market_coin_receive)*marketinfo['currentPrice'])}})
@@ -313,6 +311,7 @@ def buy_user_coins(post_id):
         elif (userinfo['money'] < (int(postinfo['sellCoin'])*int(postinfo['price']))):
             return jsonify({'result': 'fail', 'msg': '잔액이 부족합니다.'})
         else:
+            #판매자/구매자 코인 개수/잔액, 마켓 코인 가격/히스토리, 글 update
             db.user.update_one({"coinNum": userinfo['coinNum']}, {"$set": {"coinNum": (userinfo['coinNum'] + int(postinfo['sellCoin']))}})
             db.user.update_one({"money": userinfo['money']}, {"$set": {"money": userinfo['money'] - (int(postinfo['sellCoin'])*int(postinfo['price']))}})
             db.user.update_one({"money": selluserinfo['money']}, {"$set": {"money": selluserinfo['money'] + (int(postinfo['sellCoin'])*int(postinfo['price']))}})
