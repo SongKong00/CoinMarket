@@ -196,7 +196,7 @@ def api_usersell():
     if (userinfo['coinNum'] < int(sell_coin_receive)):
         return jsonify({'result': 'fail', 'msg': '판매할 코인 개수가 보유한 코인 개수를 초과하였습니다.'})
     else:
-        post = {'sellCoin': sell_coin_receive, 'price': sell_price_receive, 'done': False, 'id': payload['id']}
+        post = {'sellCoin': int(sell_coin_receive), 'price': int(sell_price_receive), 'done': False, 'id': payload['id']}
         post_id = db.post.insert_one(post).inserted_id
         db.user.update_one({'id': payload['id']}, {'$push': {'post': post_id}})
         return jsonify({'result': 'success'})
@@ -234,6 +234,31 @@ def get_posts():
     
     return render_template('all_post.html', posting = posting)
 
+
+#[전체 판매 글 내역 코인개수 기준 필터]
+@app.route('/posts/sellCoin', methods=['GET'])
+def get_posts_sellcoin():
+    token_receive = request.cookies.get('mytoken')
+    
+    payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+
+    # 사용자(collection) 조회
+    posting = db.post.find().sort("sellCoin", 1)
+    
+    return render_template('all_post.html', posting = posting)
+
+
+#[전체 판매 글 내역 코인가격 기준 필터]
+@app.route('/posts/price', methods=['GET'])
+def get_posts_price():
+    token_receive = request.cookies.get('mytoken')
+    
+    payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+
+    # 사용자(collection) 조회
+    posting = db.post.find().sort("price", 1)
+    
+    return render_template('all_post.html', posting = posting)
 
 
 #[마켓에서 코인 구매]

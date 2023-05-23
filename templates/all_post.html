@@ -53,16 +53,26 @@
                 })
             }
 
+        function all_post_sellcoin(){
+            window.location.href='/posts/sellCoin'
+        }
+
+        function all_post_price(){
+            window.location.href='/posts/price'
+        }
+
 
     </script>
 
 </head>
 <body>
     <h1>전체 판매 글 목록</h1>
+    <input type="button" onclick="all_post_sellcoin()" value="코인 개수 순">
+    <input type="button" onclick="all_post_price()" value="코인 가격 순">
     <table border="1">
         <tr>
             <th>판매하는 코인 개수</th>
-            <th>판매하는 코인 개수</th>
+            <th>판매하는 코인 개당 가격</th>
             <th>작성자</th>
             <th>구매</th>
         </tr>
