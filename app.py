@@ -20,6 +20,8 @@ import datetime
 
 import hashlib
 
+import datetime
+
 
 #################################
 ##      HTML을 주는 부분        ##
@@ -296,6 +298,7 @@ def buy_coins():
 def buy_user_coins(post_id):
     token_receive = request.cookies.get('mytoken')
     done_receive = request.form['buy_give']
+    current_time = datetime.datetime.now()
 
     try:
         payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
@@ -311,6 +314,7 @@ def buy_user_coins(post_id):
         elif (userinfo['money'] < (int(postinfo['sellCoin'])*int(postinfo['price']))):
             return jsonify({'result': 'fail', 'msg': '잔액이 부족합니다.'})
         else:
+            history_item = {'price': int(postinfo['price']), 'date': str(current_time.date())}
             #판매자/구매자 코인 개수/잔액, 마켓 코인 가격/히스토리, 글 update
             db.user.update_one({"coinNum": userinfo['coinNum']}, {"$set": {"coinNum": (userinfo['coinNum'] + int(postinfo['sellCoin']))}})
             db.user.update_one({"money": userinfo['money']}, {"$set": {"money": userinfo['money'] - (int(postinfo['sellCoin'])*int(postinfo['price']))}})
@@ -319,7 +323,7 @@ def buy_user_coins(post_id):
             db.post.update_one({"done": postinfo['done']}, {"$set": {"done": True}})
             db.post.delete_one({"_id": ObjectId(postinfo['_id'])})
             db.market.update_one({"currentPrice":marketinfo['currentPrice']},  {"$set": {"currentPrice": int(postinfo['price'])}})
-            db.market.update_one({'_id': marketinfo["_id"]}, {'$push': {'history': int(postinfo['price'])}})
+            db.market.update_one({'_id': marketinfo["_id"]}, {'$addToSet': {'history': history_item}})
 
             return jsonify({'result': 'success'})
             
