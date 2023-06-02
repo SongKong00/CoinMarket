@@ -1,20 +1,16 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html>
     <head>
-
-        <!-- Webpage Title -->
-        <title>Hello, world!</title>
-
+        <title>마이페이지-입금하기</title>
+        
         <!-- Required meta tags -->
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-        <!-- Bulma CSS -->
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
         <!-- JS -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
 
+        
         <script>
             function add() {
                 $.ajax({
@@ -34,27 +30,163 @@
                 })
             }
 
+            function main(){
+                window.location.href='/main'
+            }
+            function transaction(){
+                window.location.href='/transaction'
+            }
+            function mypage(user_id){
+               window.location.href='/'
+            }
+            function login_(){
+                window.location.href='/login'
+            }
         </script>
+
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 0;
+                background-color: #f2f2f2;
+            }
+            
+            .container {
+                max-width: 800px;
+                margin: 0 auto;
+                padding: 20px;
+            }
+            
+            .header {
+                background-color: #3e99f3;
+                color: #fff;
+                padding: 10px;
+                text-align: center;
+            }
+            
+            .nav {
+                background-color: #f2f2f2;
+                padding: 10px;
+                text-align: center;
+            }
+            
+            .nav ul {
+                list-style-type: none;
+                margin: 0;
+                padding: 0;
+            }
+            
+            .nav li {
+                display: inline-block;
+                margin-right: 10px;
+            }
+            
+            .nav a {
+                text-decoration: none;
+                padding: 6px;
+                color: #333;
+                font-weight: bold;
+            }
+            
+            .nav a:hover {
+                background-color: #3e99f3;
+                color: #fff;
+            }
+            
+            .content {
+                background-color: #fff;
+                padding: 20px;
+                border-radius: 10px;
+                margin-bottom: 20px;
+            }
+            
+            .footer {
+                background-color: #333;
+                color: #fff;
+                padding: 10px;
+                text-align: center;
+                border-radius: 10px;
+            }
+    
+            .footer p {
+                margin: 0;
+            }
+                
+            .Gomain{
+                    text-decoration: none;
+                    color: #fff;
+                }
+            h1{text-align: center;}
+            .content{
+                padding: 20px;
+                text-align: center;
+                background-color:#fff ;
+            }
+            .style1{
+                border: solid 2px #3e99f3;
+                border-radius: 10px;
+                padding-top: 15px;
+                padding-bottom:15px;
+                padding-left: 5%;
+            }
+            .strong{
+                text-align: center;
+            }
+            .button{
+                background-color: #53b8fbe1;
+                border-radius: 5px;
+                border: none;
+                color: #fff;
+                font-size: 27px;
+                width: 400px;
+                height: 50px;
+                
+            }
+            .button:hover{
+                background-color: #4479ba;
+                cursor : pointer;
+            }
+            a:hover{
+                cursor:pointer;
+            }
+        </style>
+        
     </head>
     <body>
-        <div class="section has-text-centered">
-            <h1 class="title">입금 페이지</h1>
-            <div class="container" style="width:60%">
-                <div class="field is-horizontal">
-                    <div class="field-label is-normal">
-                        <label class="label" for="add">입금할 돈</label>
-                    </div>
-                    <div class="field-body">
-                        <div class="field">
-                            <div class="control">
-                                <input type="text" class="input" id="add" placeholder="입금액">
+        <div class="container">
 
-                            </div>
-                        </div>
-                    </div>
+            <header class="header">
+                <a onclick="main()"><h1>Coin Market</h1></a>
+            </header>
+
+            <nav class="nav">
+                <ul>
+                    <li><a onclick="transaction()">거래페이지</a></li>
+                    <li><a onclick="mypage()">마이페이지</a></li>
+                    <li><a onclick="login_()">로그인 페이지</a></li>
+                </ul>
+            </nav>
+
+            <div class="content">
+                <h1 class="title">입금 페이지</h1>
+    
+                <div class="style1">
+                    <label class="label" for="add"><strong>입금할 돈</strong></label></th>
+                    <input type="text" class="input" id="add" placeholder="입금액" style="width:150px; margin-right:10px;">
+                        
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <button class="button is-primary" onclick="add()">입금</button>
+                    
                 </div>
-                <button class="button is-primary" onclick="add()">입금</button>
+                
             </div>
+                
+
+            
+            <footer class="footer">
+                <p>2023 소프트웨어 공학 및 설계</p>
+                </footer>
         </div>
     </body>
 </html>

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>거래페이지</title>
+        
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <!-- JS -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+        <script>
+            function main(){
+                window.location.href='/main'
+            }
+            function transaction(){
+                window.location.href='/transaction'
+            }
+            
+            function mypage(){
+                window.location.href='/'
+            }
+            function login_(){
+                window.location.href='/login'
+            }
+            function market(){
+                window.location.href='/market'
+            }
+            function usersell(){
+                window.location.href='/usersell'
+            }
+            function all_post(){
+                window.location.href='/posts'
+            }
+            function userpost(user_id) {
+            $.ajax({
+                type: "GET",
+                url: '/user/' + user_id + '/posts',
+                data: {},
+                success: function (response) {
+                    if (response.result === "success") {
+                        var posts = response.posts;
+                        // 받아온 게시물 데이터(posts)를 처리하는 로직을 작성
+                    } else {
+                        var message = response.message;
+                        // 에러 메시지 처리 로직을 작성
+                    }     
+                }
+            })
+        }
+        </script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f2f2f2;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background-color: #3e99f3;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+        }
+        
+        .nav {
+            background-color: #f2f2f2;
+            padding: 10px;
+            text-align: center;
+        }
+        
+        .nav ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .nav li {
+            display: inline-block;
+            margin-right: 10px;
+        }
+        
+        .nav a {
+            text-decoration: none;
+            padding: 6px;
+            color: #333;
+            font-weight: bold;
+        }
+        
+        .nav a:hover {
+            background-color: #53b8fbe1;
+            color: #fff;
+        }
+        
+        .content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .button-group {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        
+        .button-group button {
+            background-color: #53b8fbe1;
+            color: #fff;
+            padding: 10px 40px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            margin-right: 20px;
+        }
+        
+        .button-group button:last-child {
+            margin-right: 0;
+        }
+        
+        .button-group button:hover {
+            background-color: #4479ba;
+        }
+        
+        .set {
+            border: solid 2px #3e99f3;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        a:hover {
+            cursor: pointer;
+        }
+        
+        h1 {
+            text-align: center;
+        }
+        
+        .footer {
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+            border-radius: 10px;
+        }
+        .footer p {
+            margin: 0;
+        }
+        .Gomain {
+            text-decoration: none;
+            color: #fff;
+        }
+    </style>
+    </head>
+    <body>
+        <div class="container">
+            <header class="header">
+                <a onclick="main()"><h1>Coin Market</h1></a>
+            </header>
+
+            <nav class="nav">
+                <ul>
+                    <li><a onclick="transaction()">거래페이지</a></li>
+                    <li><a onclick="mypage()">마이페이지</a></li>
+                    <li><a onclick="login_()">로그인 페이지</a></li>
+                </ul>
+            </nav>
+
+            <div class="content">
+                <div class="what-do">
+                    <h2><i class="fas fa-shopping-cart"></i> 코인 구매</h2>
+                    <div class="set">
+                        <p>코인은 마켓코인과 유저 코인 두 가지 종류가 있습니다. 마켓코인은 마켓에서 보유하고 있는 코인, 유저 코인은 각 유저 계정이 
+                            소유하고 있는 코인입니다. 마켓 코인은 원하는 개수만큼 살 수 있습니다. 하지만 유저 코인은 판매글을 올린 유저가 파는 코인을 
+                            모두 구매해야 구매 가능합니다. 시세를 확인하여 신중하게 선택해주시길 바랍니다.
+                        </p>
+                        <div class="button-group">
+                            <button class="button is-danger" onclick="market()">마켓코인 구매하기</button>
+                            <button class="button is-danger" onclick="all_post()">유저 코인 판매글 조회 및 구매하기</button>
+                        </div>
+                    </div>
+
+                    <h2><i class="fas fa-handshake"></i> 코인 판매</h2>
+                    <div class="set">
+                        <p>로그인 한 계정이 가지고 있는 코인을 원하는 개수만큼, 원하는 가격으로 판매할 수 있습니다. 본인의 판매글은
+                            마이페이지에서 확인이 가능합니다. 다른 유저가 코인을 구매할 때는 해당 유저가 올린 코인을 모두 구매해야 합니다. 
+                            따라서 너무 많은 코인을 한 번에 올릴 경우 잘 팔리지 않을 수 있습니다. 그 외에도 코인의 시세를 생각하여 신중하게 
+                            글을 작성해 주시길 바랍니다.
+                        </p>
+                        <div class="button-group">
+                            <button class="button is-danger" onclick="usersell()">내 코인 판매하기</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <footer class="footer">
+                <p>2023 소프트웨어 공학 및 설계</p>
+            </footer>
+        </div>
+    </body>
+</html>

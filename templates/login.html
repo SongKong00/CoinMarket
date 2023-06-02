@@ -1,16 +1,16 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
     <head>
 
         <!-- Webpage Title -->
-        <title>Hello, world!</title>
+        <title>마이페이지-로그인</title>
 
         <!-- Required meta tags -->
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
         <!-- Bulma CSS -->
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
+
         <!-- JS -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
@@ -22,6 +22,7 @@
             // 페이지에 관계없이 브라우저에 임시로 저장되는 정보입니다. 키:밸류 형태(딕셔너리 형태)로 저장됩니다.
             // 쿠키가 있기 때문에, 한번 로그인하면 네이버에서 다시 로그인할 필요가 없는 것입니다.
             // 브라우저를 닫으면 자동 삭제되게 하거나, 일정 시간이 지나면 삭제되게 할 수 있습니다.
+            
             function login() {
                 $.ajax({
                     type: "POST",
@@ -47,43 +48,185 @@
                 window.location.href='/market'
             }
 
+            function main(){
+                window.location.href='/main'
+            }
+            function transaction(){
+                window.location.href='/transaction'
+            }
+            function mypage(user_id){
+                window.location.href='/'
+            }
+            function register(){
+                window.location.href='/register'
+            }
+            
         </script>
 
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 0;
+                background-color: #f2f2f2;
+            }
+            
+            .container {
+                max-width: 800px;
+                margin: 0 auto;
+                padding: 20px;
+            }
+            
+            .header {
+                background-color: #3e99f3;
+                color: #fff;
+                padding: 10px;
+                text-align: center;
+            }
+            
+            .nav {
+                background-color: #f2f2f2;
+                padding: 10px;
+                text-align: center;
+            }
+            
+            .nav ul {
+                list-style-type: none;
+                margin: 0;
+                padding: 0;
+            }
+            
+            .nav li {
+                display: inline-block;
+                margin-right: 10px;
+            }
+            
+            .nav a {
+                text-decoration: none;
+                padding: 6px;
+                color: #333;
+                font-weight: bold;
+            }
+            
+            .nav a:hover {
+                background-color: #53b8fbe1;
+                color: #fff;
+            }
+            /*content*/
+            .section-has-text-centered {
+                background-color: #fff;
+                padding: 20px;
+                border-radius: 10px;
+                margin-bottom: 20px;
+            }
+            
+            .footer {
+                background-color: #333;
+                color: #fff;
+                padding: 10px;
+                text-align: center;
+                border-radius: 10px;
+            }
+    
+            .footer p {
+                margin: 0;
+            }
+                
+            .Gomain{
+                text-decoration: none;
+                color: #fff;
+            }
+            
+            .login_button{
+                text-align: center;
+                padding: 10px;
+            }
+            .button{
+                background-color: #53b8fbe1;
+                border-radius: 5px;
+                border: none;
+                color: #fff;
+                font-size: 27px;
+                width: 400px;
+                height: 50px;
+                
+            }
+            .button:hover{
+                background-color: #4479ba;
+                cursor : pointer;
+            }
+
+            .tb_style1{
+                border: solid 2px #3e99f3;
+                border-radius: 10px;
+                padding-top: 10px;
+            }
+            .table{
+                width: 20px;
+                height: 40px;
+                position: fixed;
+            }
+            .signup{
+                text-align: right;
+            }
+            h1{
+                text-align:center;
+            }
+            a:hover{
+                cursor:pointer;
+            }
+        </style>
     </head>
     <body>
-        <div class="section has-text-centered">
-            <h5 class="subtitle">마켓의 잔여 코인 개수는 {{remainCoin}} 개</h5>
-            <h5 class="subtitle">현재 코인 가격은: {{currentPrice}} 원</h5><br>
-            <button class="button is-danger" onclick="market()">마켓에서 코인 사기</button><br><br>
-            <h1 class="title">로그인 페이지</h1>
-            <div class="container" style="width:60%">
-                <div class="field is-horizontal">
-                    <div class="field-label is-normal">
-                        <label class="label" for="userid">ID</label>
-                    </div>
-                    <div class="field-body">
-                        <div class="field">
-                            <div class="control">
-                                <input type="text" class="input" id="userid" aria-describedby="emailHelp"
-                                       placeholder="My ID">
-                            </div>
-                        </div>
+        <div class="container">
+            <header class="header">
+                <a onclick="main()"><h1>Coin Market</h1></a>
+            </header>
+
+            <nav class="nav">
+                <ul>
+                    <li><a onclick="transaction()">거래페이지</a></li>
+                    <li><a onclick="mypage()">마이페이지</a></li>
+                    <li><a onclick="login_()">로그인 페이지</a></li>
+                </ul>
+            </nav>
+
+            <div class="section-has-text-centered">
+
+                <h1 class="title">로그인 페이지 {{currentPrice}}</h1> 
+
+                <div class="tb_style1">
+                    <table>
+                        <colgroup>
+                            <col style="width:15%" /> 
+                        </colgroup>
+                        <tr>
+                            <th><label class="label" for="userid">ID</label></th>
+                            <td><input type="text" class="input" id="userid" aria-describedby="emailHelp"placeholder="My ID" style="width:150px; margin-right:10px;">
+                                <span class="fc01">(6~16자리, 영문 소문자 및 숫자 혼용)</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th><label class="label" for="userpw">PW</label></th>
+                            <td><input type="password" class="input" id="userpw" placeholder="My Password"style="width:150px; margin-right:10px;" /> <span class="fc01">(10자리이상, 영어 대문자, 소문자, 숫자, 특수문자 중 3종류 조합)</span></td>
+                        </tr>
+                
+                    </table>
+                    
+                    <div class="login_button">      
+                        <button class="button is-primary" onclick="login()">로그인</button>
+                        <!--<input type="image" src=" " alt="로그인버튼"/> -->
                     </div>
                 </div>
-                <div class="field is-horizontal">
-                    <div class="field-label is-normal">
-                        <label class="label" for="userpw">PW</label>
-                    </div>
-                    <div class="field-body">
-                        <div class="field">
-                            <div class="control">
-                                <input type="password" class="input" id="userpw" placeholder="My Password">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <button class="button is-primary" onclick="login()">로그인</button>
+
+                <div class="signup"><a onclick='register()' style="color: #403dfcee">회원가입</a></div>
+
             </div>
+            <footer class="footer">
+                <p>2023 소프트웨어 공학 및 설계</p>
+                </footer>
         </div>
+        
+
     </body>
 </html>

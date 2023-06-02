@@ -1,19 +1,15 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html>
     <head>
-
-        <!-- Webpage Title -->
-        <title>Hello, world!</title>
-
+        <title>마이페이지-유저코인판매하기</title>
+        
         <!-- Required meta tags -->
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-        <!-- Bulma CSS -->
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
         <!-- JS -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+
 
         <script>
             function sell_post() {
@@ -35,29 +31,174 @@
                 })
             }
 
+            function main(){
+                window.location.href='/main'
+            }
+            function transaction(){
+                window.location.href='/transaction'
+            }
+            function mypage(user_id){
+               window.location.href='/'
+            }
+            function login_(){
+                window.location.href='/login'
+            }
         </script>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 0;
+                background-color: #f2f2f2;
+            }
+            
+            .container {
+                max-width: 800px;
+                margin: 0 auto;
+                padding: 20px;
+            }
+            
+            .header {
+                background-color: #3e99f3;
+                color: #fff;
+                padding: 10px;
+                text-align: center;
+            }
+            
+            .nav {
+                background-color: #f2f2f2;
+                padding: 10px;
+                text-align: center;
+            }
+            
+            .nav ul {
+                list-style-type: none;
+                margin: 0;
+                padding: 0;
+            }
+            
+            .nav li {
+                display: inline-block;
+                margin-right: 10px;
+            }
+            
+            .nav a {
+                text-decoration: none;
+                padding: 6px;
+                color: #333;
+                font-weight: bold;
+            }
+            
+            .nav a:hover {
+                background-color: #53b8fbe1;
+                color: #fff;
+            }
+            
+            .content {
+                background-color: #fff;
+                padding: 20px;
+                border-radius: 10px;
+                margin-bottom: 20px;
+            }
+            
+            .footer {
+                background-color: #333;
+                color: #fff;
+                padding: 10px;
+                text-align: center;
+                border-radius: 10px;
+            }
+    
+            .footer p {
+                margin: 0;
+                text-align:center;
+            }
+            .Gomain{
+               text-decoration: none;
+                color: #fff;
+            }
+            h3{text-align: left;}
+            h1 {
+            text-align: center;
+            }
+            
+            button{
+                background-color: #53b8fbe1
+                border-radius: 5px;
+                border: none;
+                color: #fff;
+                font-size: 27px;
+                width: 400px;
+                height: 50px;
+                
+                
+            }
+            .button-sell button:hover{
+                background-color: #4479ba;
+                cursor : pointer;
+            }
+
+            .style1{
+                border: solid 2px #3e99f3;
+                border-radius: 10px;
+                padding-top: 15px;
+                padding-bottom:15px;
+                padding-left: 5%;
+            }
+            .strong{
+                text-align: center;
+            }
+            p{text-align: left;}
+            a:hover{
+                cursor:pointer;
+            }
+            .button-sell {
+                display: flex;
+                justify-content: center;
+                margin-top: 10px;
+            }
+            .button-sell button{
+                background-color:#53b8fbe1;
+            }
+
+        </style>
     </head>
     <body>
-        <div class="section has-text-centered">
-            <h1 class="title">내 코인 판매 페이지</h1>
-            <div class="container" style="width:60%">
-                <div class="field is-horizontal">
-                    <div class="field-label is-normal">
-                        <label class="label" for="coin">판매할 코인 개수</label>
-                        <label class="label" for="price">판매할 코인 가격</label>
-                    </div>
-                    <div class="field-body">
-                        <div class="field">
-                            <div class="control">
-                                <input type="text" class="input" id="coin" placeholder="판매할 코인 개수">
-                                <br>
-                                <input type="text" class="input" id="price" placeholder="판매할 코인 가격">
-                            </div>
-                        </div>
+        <div class="container">
+
+            <header class="header">
+                <a onclick="main()"><h1>Coin Market</h1></a>
+            </header>
+
+            <nav class="nav">
+                <ul>
+                    <li><a onclick="transaction()">거래페이지</a></li>
+                    <li><a onclick="mypage()">마이페이지</a></li>
+                    <li><a onclick="login_()">로그인 페이지</a></li>
+                </ul>
+            </nav>
+            
+            <div class="content">
+                <h1 >내 코인 판매 페이지</h1>
+                <br><p>코인을 판매할 때, 자신이 가진 코인보다 많은 수의 코인을 판매할 수 없습니다. 코인의
+                    가격을 음수로 설정할 수 없습니다. 코인의 가격 단위는 원(won)입니다. 코인이 판매된 후에는
+                    되돌리기 어려우니 신중하게 입력해주시길 바랍니다. 
+                </p><br>
+                
+                <div class="style1">
+                    <label class="label" for="coin"><strong>판매할 코인 개수</strong></label>
+                    <input type="text" class="input" id="coin" placeholder="판매할 코인 개수"> &nbsp;&nbsp;&nbsp;&nbsp;
+                    <label class="label" for="price"><strong>판매할 코인 가격</strong></label>
+                    <input type="text" class="input" id="price" placeholder="판매할 코인 가격">
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <div class="button-sell">
+                        <button class="button-is-primary" onclick="sell_post()">판매하기</button>
                     </div>
                 </div>
-                <button class="button is-primary" onclick="sell_post()">판매하기</button>
             </div>
+            <footer class="footer">
+                <p>2023 소프트웨어 공학 및 설계</p>
+                </footer>
         </div>
     </body>
 </html>

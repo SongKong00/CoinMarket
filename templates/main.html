@@ -1,35 +1,18 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>마이페이지-출금하기</title>
-        
+        <title>메인 페이지</title>
+
         <!-- Required meta tags -->
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <!-- JS -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+        <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 
 
         <script>
-            function withdraw() {
-                $.ajax({
-                    type: "POST",
-                    url: "/api/withdrawmoney",
-                    data: {
-                        withdraw_money_give: $('#withdraw').val(),
-                    },
-                    success: function (response) {
-                        if (response['result'] == 'success') {
-                            alert('출금 완료하였습니다.')
-                            window.location.href = '/'
-                        } else {
-                            alert(response['msg'])
-                        }
-                    }
-                })
-            }
-
             function main(){
                 window.location.href='/main'
             }
@@ -42,8 +25,56 @@
             function login_(){
                 window.location.href='/login'
             }
-        </script>
 
+            function history() {
+                $.ajax({
+                    type: "GET",
+                    url: '/history',
+                    data: {},
+                    success: function (response) {
+                        if (response.result === "success") {
+                        var posts = response.posts;
+                        // 받아온 게시물 데이터(posts)를 처리하는 로직을 작성
+                        } else {
+                        var message = response.message;
+                        // 에러 메시지 처리 로직을 작성
+                        }
+                    }
+                })
+            }
+
+            function drawGraph() {
+                var dates = JSON.parse('{{ dates | tojson | safe }}');
+                var prices = JSON.parse('{{ prices | tojson | safe }}');
+
+                var data = [
+                    {
+                        x: dates,
+                        y: prices,
+                        type: 'scatter',
+                        mode: 'lines',
+                        marker: {
+                            color: 'blue'
+                        }
+                    }
+                ];
+
+                var layout = {
+                    title: '코인 가격 변동 추이',
+                    xaxis: {
+                        title: '날짜'
+                    },
+                    yaxis: {
+                        title: '가격'
+                    }
+                };
+
+                Plotly.newPlot('graph', data, layout);
+            }
+
+            drawGraph();
+
+        </script>
         <style>
             body {
                 font-family: Arial, sans-serif;
@@ -112,39 +143,22 @@
             .footer p {
                 margin: 0;
             }
-            .Gomain{
-                text-decoration: none;
-                color: #fff;
-            }
-            h1{text-align: center;}
+                .Gomain{
+                    text-decoration: none;
+                    color: #fff;
+                }
             .content{
                 padding: 20px;
                 text-align: center;
                 background-color:#fff ;
             }
-            .style1{
-                border: solid 2px #3e99f3;
-                border-radius: 10px;
-                padding-top: 15px;
-                padding-bottom:15px;
-                padding-left: 5%;
-            }
-            .strong{
-                text-align: center;
-            }
-            .button{
-                background-color: #53b8fbe1;
-                border-radius: 5px;
-                border: none;
+            .login{
+                background-color: #333;
                 color: #fff;
-                font-size: 27px;
-                width: 400px;
-                height: 50px;
-                
-            }
-            .button:hover{
-                background-color: #4479ba;
-                cursor : pointer;
+                padding: 10px;
+                right: 5%;
+                position: relative;
+                transform: translateY(-50%);
             }
             a:hover{
                 cursor:pointer;
@@ -153,7 +167,7 @@
     </head>
     <body>
         <div class="container">
-
+            <!--메인페이지 이동-->
             <header class="header">
                 <a onclick="main()"><h1>Coin Market</h1></a>
             </header>
@@ -162,25 +176,33 @@
                 <ul>
                     <li><a onclick="transaction()">거래페이지</a></li>
                     <li><a onclick="mypage()">마이페이지</a></li>
-                    <li><a onclick="login()">로그인 페이지</a></li>
+                    <li><a onclick="login_()">로그인 페이지</a></li>
                 </ul>
             </nav>
-            
+
             <div class="content">
-                <h1 class="title">출금 페이지</h1>
-    
-                <div class="style1">
-                    <label class="label" for="add"><strong>출금할 돈</strong></label></th>
-                    <input type="text" class="input" id="withdraw" placeholder="출금액" style="width:150px; margin-right:10px;">
-                        
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        <button class="button is-primary" onclick="withdraw()">출금</button>
-                    
+                <h2>메인 페이지</h2>
+            
+                <div class="intro">
+                    안녕하세요.<br><br> Coin market에 오신걸 환영합니다!<br> <br>
+                    해당 사이트는 유저 및 마켓 간의 자유로운 코인거래가 가능합니다. <br><br>
+                    계정을 만들어 여러 유저와 코인을 거래해 수익을 올려보세요! 
+                </div><br>
+
+                <h2>코인시세</h2>
+                <h5 class="subtitle">현재 코인 가격은: {{currentPrice}} 원</h5><br>
+                <div id="graph">
+                    <script>
+                        drawGraph();
+                    </script>
                 </div>
+                
             </div>
+            
             <footer class="footer">
                 <p>2023 소프트웨어 공학 및 설계</p>
-                </footer>
+            </footer>
+    
         </div>
     </body>
 </html>
