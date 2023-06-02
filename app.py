@@ -20,8 +20,6 @@ import datetime
 
 import hashlib
 
-import datetime
-
 
 #################################
 ##      HTML을 주는 부분        ##
@@ -42,7 +40,11 @@ def home():
         #전체 글 목록 조회 
         posting = db.post.find()
 
-        return render_template('index.html', nickname=user_info["nick"], money=user_info["money"], coinNum=user_info["coinNum"], posts = posts, user_id = user_id, posting=posting)
+        # history 조회
+        data = db.market.find_one({}, {'history': 1})
+        history = data['history']
+
+        return render_template('mypage.html', nickname=user_info["nick"], money=user_info["money"], coinNum=user_info["coinNum"], posts = posts, user_id = user_id, posting=posting, history=history)
     except jwt.ExpiredSignatureError:
         return redirect(url_for("login", msg="로그인 시간이 만료되었습니다."))
     except jwt.exceptions.DecodeError:
@@ -53,12 +55,37 @@ def home():
 def login():
     msg = request.args.get("msg")
     market_info = db.market.find_one({"_id": ObjectId('6469a502214a03383c08f340')})
-    return render_template('login.html', msg=msg, remainCoin = market_info["remainCoin"], currentPrice = market_info["currentPrice"])
+    return render_template('login.html', msg=msg)
 
 
 @app.route('/register')
 def register():
     return render_template('register.html')
+
+@app.route('/main')
+def main():
+    #경로문제???
+     # history 조회
+    #data = db.market.find_one({}, {'history': 1})
+    #history = data['history']
+
+    data = db.market.find_one({}, {'history': 1}) 
+    history = data['history']
+
+    dates = [item['date'] for item in history]
+    prices = [item['price'] for item in history]
+
+    market_info = db.market.find_one({"_id": ObjectId('6469a502214a03383c08f340')})
+
+    return render_template('main.html', currentPrice = market_info["currentPrice"], dates=dates, prices=prices)
+
+@app.route('/mypage')
+def mypage():
+    return render_template('mypage.html')
+
+@app.route('/transaction')
+def transaction():
+    return render_template('transaction.html')
 
 @app.route('/add')
 def add():
@@ -76,6 +103,10 @@ def usersell():
 def market():
     market_info = db.market.find_one({"_id": ObjectId('6469a502214a03383c08f340')})
     return render_template('market.html', remainCoin = market_info["remainCoin"], currentPrice = market_info["currentPrice"])
+
+@app.route('/all_post')
+def posts():
+    return render_template('all_post.html')
 
 
 #################################
@@ -260,6 +291,24 @@ def get_posts_price():
     return render_template('all_post.html', posting = posting)
 
 
+#[코인 가격 변동 추이 조회]
+@app.route('/history', methods=['GET'])
+def get_history():
+    token_receive = request.cookies.get('mytoken')
+    
+    payload = jwt.decode(token_receive, SECRET_KEY, algorithms=['HS256'])
+
+    # history 조회
+    data = db.market.find_one({}, {'history': 1})
+    history = data['history']
+
+    dates = [item['date'] for item in history]
+    prices = [item['price'] for item in history]
+
+    return render_template('main.html', history=history)
+
+
+    
 #[마켓에서 코인 구매]
 @app.route('/market', methods=['POST'])
 def buy_coins():
@@ -319,6 +368,7 @@ def buy_user_coins(post_id):
             db.user.update_one({"coinNum": userinfo['coinNum']}, {"$set": {"coinNum": (userinfo['coinNum'] + int(postinfo['sellCoin']))}})
             db.user.update_one({"money": userinfo['money']}, {"$set": {"money": userinfo['money'] - (int(postinfo['sellCoin'])*int(postinfo['price']))}})
             db.user.update_one({"money": selluserinfo['money']}, {"$set": {"money": selluserinfo['money'] + (int(postinfo['sellCoin'])*int(postinfo['price']))}})
+            db.user.update_one({"coinNum": selluserinfo['coinNum']}, {"$set": {"coinNum": selluserinfo['coinNum'] - int(postinfo['sellCoin'])}})
             db.user.update_one({}, {"$pull": {"post": {"_id": ObjectId(postinfo['_id'])}}})
             db.post.update_one({"done": postinfo['done']}, {"$set": {"done": True}})
             db.post.delete_one({"_id": ObjectId(postinfo['_id'])})
@@ -336,4 +386,19 @@ def buy_user_coins(post_id):
 
 if __name__ == '__main__':
     app.run('0.0.0.0', port=5000, debug=True)
+    
+#[로그인 여부 확인]
+#@app.route('/user/<user_id>/posts', methods=['GET'])
+#def profile():
+#    token_receive = request.cookies.get('mytoken')#토큰을 가져옴
+
+#    if token_receive:
+        # 토큰 유효성 검사 로직
+        # 유효한 토큰인지 확인하고 사용자 정보를 반환
+        # 사용자(collection) 조회
+#        user = db.user.find_one({'_id': ObjectId(user_id)})
+#        user_id = str(user['_id'])
+#        return jsonify({'user_id': '유저 아이디입니다'})
+#    else:
+#        return jsonify({'message': '로그인이 필요합니다.'})
 
