@@ -9,7 +9,8 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-        <!-- Bulma CSS -->
+        <!-- Font-Awesome icon -->
+        <script src="https://kit.fontawesome.com/5f0766ffbf.js" crossorigin="anonymous"></script>
 
         <!-- JS -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
@@ -138,18 +139,18 @@
             }
             
             .login_button{
+                padding-right:none;
                 text-align: center;
                 padding: 10px;
             }
             .button{
                 background-color: #53b8fbe1;
-                border-radius: 5px;
+                padding: 10px 30px ;
+                border-radius: 3px;
                 border: none;
                 color: #fff;
-                font-size: 27px;
-                width: 400px;
-                height: 50px;
-                
+                white-space: nowrap;
+                transition: background-color 0.3s;
             }
             .button:hover{
                 background-color: #4479ba;
@@ -159,16 +160,24 @@
             .tb_style1{
                 border: solid 2px #3e99f3;
                 border-radius: 10px;
-                padding-top: 10px;
+                padding-top: 15px;
+                padding-bottom:15px;
             }
-            .table{
-                width: 20px;
-                height: 40px;
-                position: fixed;
+            th{
+                padding-left:20px;
+                padding-bottom:none;
+                padding-right:2px;
             }
+            td{
+                padding-left:8px;
+                padding-bottom:none;
+            }
+
             .signup{
-                text-align: right;
+                padding-top: 10px;
+                text-align: center;
             }
+            
             h1{
                 text-align:center;
             }
@@ -197,29 +206,20 @@
 
                 <div class="tb_style1">
                     <table>
-                        <colgroup>
-                            <col style="width:15%" /> 
-                        </colgroup>
-                        <tr>
-                            <th><label class="label" for="userid">ID</label></th>
-                            <td><input type="text" class="input" id="userid" aria-describedby="emailHelp"placeholder="My ID" style="width:150px; margin-right:10px;">
-                                <span class="fc01">(6~16자리, 영문 소문자 및 숫자 혼용)</span>
-                            </td>
-                        </tr>
-                        <tr>
+                            <th><label class="label" for="userid" style="margin-left:80px">ID</label></th>
+                            <td><input type="text" class="input" id="userid" aria-describedby="emailHelp"placeholder="My ID" ></td>
+                            
                             <th><label class="label" for="userpw">PW</label></th>
-                            <td><input type="password" class="input" id="userpw" placeholder="My Password"style="width:150px; margin-right:10px;" /> <span class="fc01">(10자리이상, 영어 대문자, 소문자, 숫자, 특수문자 중 3종류 조합)</span></td>
-                        </tr>
-                
+                            <td><input type="password" class="input" id="userpw" placeholder="My Password"> </td>
+                            <td><div class="login_button">      
+                                <button class="button is-primary" onclick="login()">로그인</button>
+                            </div></td>
                     </table>
                     
-                    <div class="login_button">      
-                        <button class="button is-primary" onclick="login()">로그인</button>
-                        <!--<input type="image" src=" " alt="로그인버튼"/> -->
-                    </div>
+                    
                 </div>
 
-                <div class="signup"><a onclick='register()' style="color: #403dfcee">회원가입</a></div>
+                <div class="signup" style="color: #808080"><a onclick='register()' ><i class="fa-solid fa-user-plus" style="margin-right:5px"></i>회원가입</a></div>
 
             </div>
             <footer class="footer">

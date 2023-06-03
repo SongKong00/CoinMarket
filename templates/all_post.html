@@ -133,12 +133,12 @@
                 background-color: #333;
                 color: #fff;
                 padding: 10px;
-                text-align: center;
                 border-radius: 10px;
             }
     
             .footer p {
                 margin: 0;
+                text-align:center;
             }
                 
             .Gomain{
@@ -172,23 +172,25 @@
         
             .bt{
                 background-color: #53b8fbe1;
-                border-radius: 5px;
+                border-radius: 3px;
+                font-size:20px;
                 border: none;
                 color: #fff;
-                font-size: 25px;
+                transition: background-color 0.3s;
             }
             .bt2{
                 background-color: #53b8fbe1;
-                border-radius: 5px;
+                border-radius: 3px;
                 border: none;
-                color: #fff;
-                font-size: 15px;
+                color: #fff; 
+                transition: background-color 0.3s;
+
             }
             .bt:hover,.bt2:hover{
                 background-color: #4479ba;
                 cursor : pointer;
             }
-            p{
+            .selling_list_sort{
                 text-align: right;
             }
             a:hover{
@@ -216,7 +218,7 @@
                 <h1>전체 판매 글 목록</h1>
 
                 <h2>전체 판매 글 목록</h2>
-                <p>판매글 목록 정렬
+                <p class="selling_list_sort">판매글 목록 정렬
                     <input type="button" class="bt2" onclick="all_post_sellcoin()" value="코인 개수 순">
                     <input type="button" class="bt2" onclick="all_post_price()" value="코인 가격 순">
                 </p>

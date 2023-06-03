@@ -135,13 +135,12 @@
             }
             .button{
                 background-color: #53b8fbe1;
-                border-radius: 5px;
+                padding: 5px 10px ;
+                border-radius: 3px;
                 border: none;
                 color: #fff;
-                font-size: 27px;
-                width: 400px;
-                height: 50px;
-                
+                white-space: nowrap;
+                transition: background-color 0.3s;
             }
             .button:hover{
                 background-color: #4479ba;
@@ -173,10 +172,10 @@
     
                 <div class="style1">
                     <label class="label" for="add"><strong>입금할 돈</strong></label></th>
-                    <input type="text" class="input" id="add" placeholder="입금액" style="width:150px; margin-right:10px;">
+                    <input type="text" class="input" id="add" placeholder="입금액" style="width:150px;margin-left:8px; margin-right:10px;">
                         
-                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        <button class="button is-primary" onclick="add()">입금</button>
+                    
+                    <button class="button is-primary" onclick="add()">입금하기</button>
                     
                 </div>
                 

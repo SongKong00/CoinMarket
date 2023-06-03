@@ -10,6 +10,8 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
 
+        <!-- Font-Awesome icon -->
+        <script src="https://kit.fontawesome.com/5f0766ffbf.js" crossorigin="anonymous"></script>
 
         <script>
             function market() {
@@ -143,6 +145,7 @@
                 font-size: 14px;
                 padding: 5px 10px;
                 cursor: pointer;
+                transition: background-color 0.3s;
             }
     
             .button:hover {
@@ -184,15 +187,15 @@
             <div class="content">
                 <h1>마켓 코인 구매 페이지</h1><br>
             
-                🏦마켓의 잔여 코인 개수<h3 class="subtitle">{{remainCoin}} 개</h3><br>
+                <i class="fa-solid fa-landmark" style="color:#363636"></i>      마켓의 잔여 코인 개수<h3 class="subtitle">{{remainCoin}} 개</h3><br>
             
-                💰현재 코인 가격<h3 class="subtitle">{{currentPrice}} 원</h3><br>
+                <i class="fa-solid fa-won-sign"style="color:#363636"></i>      현재 코인 가격<h3 class="subtitle">{{currentPrice}} 원</h3><br>
             
                 <div class="style1">
                     <label class="label" for="market"><strong>구매할 개수</strong></label>
-                    <input type="number" class="input" id="market" placeholder="구매 개수" style="width:150px; height: 30px; margin-right:10px;">
+                    <input type="number" class="input" id="market" placeholder="구매 개수" style="width:150px; height: 30px; margin-right:10px; margin-left:8px;">
             
-                    &nbsp;
+                    
             
                     <button class="button is-primary" onclick="market()">구매 완료</button><br><br>
 

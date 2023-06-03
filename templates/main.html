@@ -11,6 +11,8 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
         <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 
+        <!-- Font-Awesome icon -->
+        <script src="https://kit.fontawesome.com/5f0766ffbf.js" crossorigin="anonymous"></script>
 
         <script>
             function main(){
@@ -54,13 +56,14 @@
                         type: 'scatter',
                         mode: 'lines',
                         marker: {
-                            color: 'blue'
+                            color: '#3e99f3'
                         }
+                        
                     }
                 ];
 
                 var layout = {
-                    title: '코인 가격 변동 추이',
+                    //title: '코인 가격 변동 추이',
                     xaxis: {
                         title: '날짜'
                     },
@@ -163,6 +166,11 @@
             a:hover{
                 cursor:pointer;
             }
+            h2 {
+                text-decoration-line: underline;
+                text-decoration-style: double !important;
+                text-decoration-color: #bad7f4;
+            }
         </style>
     </head>
     <body>
@@ -181,17 +189,20 @@
             </nav>
 
             <div class="content">
-                <h2>메인 페이지</h2>
-            
-                <div class="intro">
+                <h1>메인 페이지</h1>
+                <div class="intro"style='margin-top:30px'>
                     안녕하세요.<br><br> Coin market에 오신걸 환영합니다!<br> <br>
                     해당 사이트는 유저 및 마켓 간의 자유로운 코인거래가 가능합니다. <br><br>
                     계정을 만들어 여러 유저와 코인을 거래해 수익을 올려보세요! 
                 </div><br>
+                
 
-                <h2>코인시세</h2>
-                <h5 class="subtitle">현재 코인 가격은: {{currentPrice}} 원</h5><br>
-                <div id="graph">
+                <h2><i class="fa-sharp fa-solid fa-coin" ></i>코인시세</h2>
+                <h3 class="subtitle">현재 코인 가격<p style="color:#4b9ae4"><i class="fa-solid fa-won-sign" style="margin-right:3px"></i> {{currentPrice}} 원 </p>      </h3><br>
+                <h3 class="subtitle">현재 코인 개수<p style="color:#4b9ae4">{{coinNum}} 개 </p>      </h3><br>
+                <h2 style="margin-bottom:none;">코인 가격 변동 추이<h2>
+                <div id="graph"style="margin-top:none;">
+                    
                     <script>
                         drawGraph();
                     </script>
