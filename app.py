@@ -5,7 +5,7 @@ app = Flask(__name__)
 
 from pymongo import MongoClient
 
-client = MongoClient("mongodb+srv://hesong1:thdgkdms1!@song.h22vyph.mongodb.net/?retryWrites=true&w=majority")
+client = MongoClient("mongodb+srv://hesong1:비밀번호!@song.h22vyph.mongodb.net/?retryWrites=true&w=majority")
 db = client["software_engineering"]
 
 # JWT 토큰을 만들 때 필요한 비밀문자열입니다.
@@ -77,7 +77,7 @@ def main():
 
     market_info = db.market.find_one({"_id": ObjectId('6469a502214a03383c08f340')})
 
-    return render_template('main.html', currentPrice = market_info["currentPrice"], dates=dates, prices=prices)
+    return render_template('main.html', coinNum = market_info["remainCoin"], currentPrice = market_info["currentPrice"], dates=dates, prices=prices)
 
 @app.route('/mypage')
 def mypage():
@@ -226,7 +226,6 @@ def api_usersell():
     if (userinfo['coinNum'] < int(sell_coin_receive)):
         return jsonify({'result': 'fail', 'msg': '판매할 코인 개수가 보유한 코인 개수를 초과하였습니다.'})
     else:
-        db.user.update_one({"coinNum": userinfo['coinNum']}, {"$set": {"coinNum": (userinfo['coinNum'] - int(sell_coin_receive))}})
         post = {'sellCoin': int(sell_coin_receive), 'price': int(sell_price_receive), 'done': False, 'id': payload['id']}
         post_id = db.post.insert_one(post).inserted_id
         db.user.update_one({'id': payload['id']}, {'$push': {'post': post_id}})
@@ -363,7 +362,7 @@ def buy_user_coins(post_id):
             return jsonify({'result': 'fail', 'msg': '이미 판매가 완료되었습니다.'})
         elif (userinfo['money'] < (int(postinfo['sellCoin'])*int(postinfo['price']))):
             return jsonify({'result': 'fail', 'msg': '잔액이 부족합니다.'})
-        elif (userinfo == selluserinfo):
+        elif (userinfo['id'] == selluserinfo['id']):
             return jsonify({'result': 'fail', 'msg': '본인이 판매하는 코인은 구매 불가능합니다.'})
         else:
             history_item = {'price': int(postinfo['price']), 'date': str(current_time.date())}
@@ -371,6 +370,7 @@ def buy_user_coins(post_id):
             db.user.update_one({"coinNum": userinfo['coinNum']}, {"$set": {"coinNum": (userinfo['coinNum'] + int(postinfo['sellCoin']))}})
             db.user.update_one({"money": userinfo['money']}, {"$set": {"money": userinfo['money'] - (int(postinfo['sellCoin'])*int(postinfo['price']))}})
             db.user.update_one({"money": selluserinfo['money']}, {"$set": {"money": selluserinfo['money'] + (int(postinfo['sellCoin'])*int(postinfo['price']))}})
+            db.user.update_one({"coinNum": selluserinfo['coinNum']}, {"$set": {"coinNum": (selluserinfo['coinNum'] - int(postinfo['sellCoin']))}})
             db.user.update_one({}, {"$pull": {"post": {"_id": ObjectId(postinfo['_id'])}}})
             db.post.update_one({"done": postinfo['done']}, {"$set": {"done": True}})
             db.post.delete_one({"_id": ObjectId(postinfo['_id'])})
