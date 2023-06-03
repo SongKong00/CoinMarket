@@ -226,6 +226,7 @@ def api_usersell():
     if (userinfo['coinNum'] < int(sell_coin_receive)):
         return jsonify({'result': 'fail', 'msg': '판매할 코인 개수가 보유한 코인 개수를 초과하였습니다.'})
     else:
+        db.user.update_one({"coinNum": userinfo['coinNum']}, {"$set": {"coinNum": (userinfo['coinNum'] - int(sell_coin_receive))}})
         post = {'sellCoin': int(sell_coin_receive), 'price': int(sell_price_receive), 'done': False, 'id': payload['id']}
         post_id = db.post.insert_one(post).inserted_id
         db.user.update_one({'id': payload['id']}, {'$push': {'post': post_id}})
@@ -362,13 +363,14 @@ def buy_user_coins(post_id):
             return jsonify({'result': 'fail', 'msg': '이미 판매가 완료되었습니다.'})
         elif (userinfo['money'] < (int(postinfo['sellCoin'])*int(postinfo['price']))):
             return jsonify({'result': 'fail', 'msg': '잔액이 부족합니다.'})
+        elif (userinfo == selluserinfo):
+            return jsonify({'result': 'fail', 'msg': '본인이 판매하는 코인은 구매 불가능합니다.'})
         else:
             history_item = {'price': int(postinfo['price']), 'date': str(current_time.date())}
             #판매자/구매자 코인 개수/잔액, 마켓 코인 가격/히스토리, 글 update
             db.user.update_one({"coinNum": userinfo['coinNum']}, {"$set": {"coinNum": (userinfo['coinNum'] + int(postinfo['sellCoin']))}})
             db.user.update_one({"money": userinfo['money']}, {"$set": {"money": userinfo['money'] - (int(postinfo['sellCoin'])*int(postinfo['price']))}})
             db.user.update_one({"money": selluserinfo['money']}, {"$set": {"money": selluserinfo['money'] + (int(postinfo['sellCoin'])*int(postinfo['price']))}})
-            db.user.update_one({"coinNum": selluserinfo['coinNum']}, {"$set": {"coinNum": selluserinfo['coinNum'] - int(postinfo['sellCoin'])}})
             db.user.update_one({}, {"$pull": {"post": {"_id": ObjectId(postinfo['_id'])}}})
             db.post.update_one({"done": postinfo['done']}, {"$set": {"done": True}})
             db.post.delete_one({"_id": ObjectId(postinfo['_id'])})
